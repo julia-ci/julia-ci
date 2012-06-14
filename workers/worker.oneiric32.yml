@@ -1,0 +1,8 @@
+base: ubuntu-11.10-server-i386
+recipes:
+ - apt
+ - build-essential
+ - java
+ - git 
+ - gfortran
+

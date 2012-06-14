@@ -1,0 +1,4 @@
+.github*
+keys/*
+.vagrant
+travis-boxes
