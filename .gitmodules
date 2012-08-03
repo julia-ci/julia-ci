@@ -1,0 +1,96 @@
+[submodule "cookbooks/ant"]
+	path = cookbooks/ant
+	url = git@github.com:julia-ci/cookbook-ant.git
+[submodule "cookbooks/apache2"]
+	path = cookbooks/apache2
+	url = git@github.com:julia-ci/cookbook-apache2.git
+[submodule "cookbooks/apt"]
+	path = cookbooks/apt
+	url = git@github.com:julia-ci/cookbook-apt.git
+[submodule "cookbooks/beard"]
+	path = cookbooks/beard
+	url = git@github.com:julia-ci/cookbook-beard.git
+[submodule "cookbooks/bluepill"]
+	path = cookbooks/bluepill
+	url = git@github.com:julia-ci/cookbook-bluepill.git
+[submodule "cookbooks/build-essential"]
+	path = cookbooks/build-essential
+	url = https://github.com/julia-ci/cookbook-build-essential
+[submodule "cookbooks/chef-client"]
+	path = cookbooks/chef-client
+	url = git@github.com:julia-ci/cookbook-chef-client.git
+[submodule "cookbooks/chef-server"]
+	path = cookbooks/chef-server
+	url = git@github.com:julia-ci/cookbook-chef-server.git
+[submodule "cookbooks/couchdb"]
+	path = cookbooks/couchdb
+	url = git@github.com:julia-ci/cookbook-couchdb.git
+[submodule "cookbooks/daemontools"]
+	path = cookbooks/daemontools
+	url = git@github.com:julia-ci/cookbook-daemontools.git
+[submodule "cookbooks/erlang"]
+	path = cookbooks/erlang
+	url = git@github.com:julia-ci/cookbook-erlang.git
+[submodule "cookbooks/gecode"]
+	path = cookbooks/gecode
+	url = git@github.com:julia-ci/cookbook-gecode.git
+[submodule "cookbooks/gfortran"]
+	path = cookbooks/gfortran
+	url = git@github.com:julia-ci/cookbook-gfortran.git
+[submodule "cookbooks/git"]
+	path = cookbooks/git
+	url = git@github.com:julia-ci/cookbook-git.git
+[submodule "cookbooks/java"]
+	path = cookbooks/java
+	url = git@github.com:julia-ci/cookbook-java.git
+[submodule "cookbooks/jenkins"]
+	path = cookbooks/jenkins
+	url = git@github.com:julia-ci/cookbook-jenkins.git
+[submodule "cookbooks/julia-jenkins"]
+	path = cookbooks/julia-jenkins
+	url = git@github.com:julia-ci/cookbook-julia-jenkins.git
+[submodule "cookbooks/mingw"]
+	path = cookbooks/mingw
+	url = git@github.com:julia-ci/cookbook-mingw.git
+[submodule "cookbooks/openssl"]
+	path = cookbooks/openssl
+	url = git@github.com:julia-ci/cookbook-openssl.git
+[submodule "cookbooks/powershell"]
+	path = cookbooks/powershell
+	url = git@github.com:julia-ci/cookbook-powershell.git
+[submodule "cookbooks/python"]
+	path = cookbooks/python
+	url = git@github.com:julia-ci/cookbook-python.git
+[submodule "cookbooks/user"]
+	path = cookbooks/user
+	url = git@github.com:julia-ci/cookbook-chef-user.git
+[submodule "cookbooks/windows"]
+	path = cookbooks/windows
+	url = git://github.com/opscode-cookbooks/windows.git
+[submodule "cookbooks/xml"]
+	path = cookbooks/xml
+	url = git@github.com:julia-ci/cookbook-xml.git
+[submodule "cookbooks/zlib"]
+	path = cookbooks/zlib
+	url = git@github.com:julia-ci/cookbook-zlib.git
+[submodule "jenkins-plugins/jenkins.rb"]
+	path = jenkins-plugins/jenkins.rb
+	url = https://github.com/julia-ci/jenkins.rb.git
+[submodule "jenkins-plugins/ssh-plugin"]
+	path = jenkins-plugins/ssh-plugin
+	url = https://github.com/julia-ci/ssh-plugin.git
+[submodule "jenkins-plugins/virtualbox-plugin"]
+	path = jenkins-plugins/virtualbox-plugin
+	url = https://github.com/julia-ci/virtualbox-plugin
+[submodule "vagrant"]
+	path = vagrant
+	url = https://github.com/mitchellh/vagrant.git
+[submodule "vagrant-dns"]
+	path = vagrant-dns
+	url = git@github.com:julia-ci/vagrant-dns.git
+[submodule "vagrant-windows"]
+	path = vagrant-windows
+	url = https://github.com/julia-ci/vagrant-windows
+[submodule "veewee"]
+	path = veewee
+	url = https://github.com/jedi4ever/veewee.git
