@@ -1,0 +1,15 @@
+base: Fedora-16-x86_64
+recipes:
+    - java
+    - jenkins::node_ssh
+    - build-essential
+    - git
+    - gfortran
+json:
+    jenkins:
+        server:
+            host: jenkins.dev
+            keyfiles:
+                priv: /vagrant/keys/jenkins
+                pub: /vagrant/keys/jenkins.pub
+        java_home: /usr

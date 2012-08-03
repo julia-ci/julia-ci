@@ -1,0 +1,32 @@
+PATH
+  remote: ../jenkins.rb/ruby-runtime
+  specs:
+    jenkins-plugin-runtime (0.2.2)
+      json
+      slop (~> 3.0.2)
+
+PATH
+  remote: ../jenkins.rb/ruby-tools/jpi
+  specs:
+    jpi (0.3.7)
+      bundler (~> 1.1.0)
+      jenkins-plugin-runtime (~> 0.2.0)
+      jenkins-war (>= 1.427)
+      rubyzip
+      thor
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    jenkins-war (1.447)
+    json (1.7.3-java)
+    rubyzip (0.9.8)
+    slop (3.0.4)
+    thor (0.15.2)
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  jenkins-plugin-runtime!
+  jpi!

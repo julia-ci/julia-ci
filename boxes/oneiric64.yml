@@ -1,0 +1,7 @@
+base: ubuntu-11.10-server-amd64 
+recipes:
+ - apt::cacher-client
+ - apt
+json:
+    apt:
+        cacher_ipaddress: 192.168.67.1

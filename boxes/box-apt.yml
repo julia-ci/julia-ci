@@ -1,0 +1,8 @@
+base: ubuntu-11.10-server-amd64
+ports:
+    - 3142: 3142
+recipes: 
+    - apt::cacher-ng
+json:
+    apt:
+        cacher_ipaddress: 127.0.0.1

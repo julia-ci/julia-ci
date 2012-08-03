@@ -1,0 +1,18 @@
+base: windows-7-enterprise-amd64
+guest: windows
+hostname: windows
+recipes:
+    - powershell
+    - java
+    - jenkins::node_windows
+    - mingw::msys
+    - git
+    - python
+json:
+    jenkins:
+        server:
+            host: jenkins.dev
+        node:
+            user: vagrant
+            pass: vagrant
+            

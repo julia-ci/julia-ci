@@ -1,124 +1,120 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$: << 'lib'
-require 'travis/boxes'
+$LOAD_PATH << "#{File.expand_path('..',__FILE__)}/lib"
+require 'travis/boxes/config'
+require 'ipaddress'
+require 'resolv'
 
-ENV_REGEX = /config\/worker\.(\w+)\.yml/
+require File.expand_path('../vagrant-dns/lib/vagrant-dns/configurator',__FILE__)
+require File.expand_path('../vagrant-dns/lib/vagrant-dns/service',__FILE__)
+Vagrant.require_plugin File.expand_path('../vagrant-dns/lib/vagrant-dns',__FILE__)
+require File.expand_path('../vagrant-windows/lib/vagrant-windows',__FILE__)
 
-envs = Dir['config/*'].map do |dir|
+network = IPAddress("192.168.67.1/24")
+
+ENV_REGEX = /boxes\/box\-(.+)\.yml/
+home2 = File.expand_path('..',__FILE__)
+Dir.chdir(home2)
+
+envs = Dir['boxes/*'].map do |dir|
     match = ENV_REGEX.match(dir)
-
-    if (match && match[1] != 'base')
+    if (match)
         env = match[1]
-        [env, Travis::Box::Config.new[env]]
+        [env, Travis::Boxes::Config.new["box-#{env}"]]
     else
         nil
     end
 end.compact
 
-Vagrant::Config.run do |config|
+begin
+resolv = ::Resolv::DNS.new(:nameserver_port => [['127.0.0.1',5300]],
+                :search => ['dev'],
+                :ndots => 1)
+
+envs = Hash[envs]
+
+allhosts = network.hosts
+hosts = {}
+envs.each_with_index do |(name, config), num|
+    hosts[name] = nil
+    resolv.each_address("#{name}.dev") do |addr|
+        ipaddr = IPAddress(addr.address)
+        #this will set hosts[name] to nil if there's a collision
+        hosts[name] = allhosts.delete(ipaddr) 
+    end
+end
+rescue
+allhosts = network.hosts
+hosts = {}
+end
+
+Vagrant::Config.run do |c|
+
   envs.each_with_index do |(name, config), num|
 
-    full_name = "travis-#{name}"
+    c.vm.define(name) do |box|
+      box.vm.box = "julia-#{config.base}"
+      box.vm.host_name = config.hostname ? config.hostname : "#{name}.dev"   
+      box.vm.guest = config.guest ? config.guest.to_sym : :linux
+      ipaddr = hosts[name] ? hosts[name].address : allhosts.pop().address
+      box.vm.network :hostonly, ipaddr, :netmask => network.netmask
+      box.vm.boot_mode = :gui
+      
+      if box.vm.guest == :windows
+        box.vm.forward_port 3389, 3390, :name => "rdp", :auto => true
+        box.vm.forward_port 5985, 5985, :name => "winrm", :auto => true
+        box.winrm.timeout = 1800
+        box.winrm.boot_timeout = 20
+      end
+  
+      if config.ruby_files && config.ruby_files.vm 
+      config.ruby_files.vm.each do |file|
+            load "#{home2}/boxes/#{file}"
+      end
+      end
 
-    c.vm.define(full_name) do |box|
-      box.vm.box = full_name
-      box.vm.forward_port(22, 3340 + num, :name => "ssh")
+      if config.ports? 
+          config.ports[0].each_with_index do |(remote, local), i|
+            box.vm.forward_port remote, local
+          end
+      end
 
       box.vm.customize [
         "modifyvm",   :id,
-        "--memory",   config.memory.to_s,
-        "--name",     "#{full_name}-base",
-        "--nictype1", "Am79C973",
-        "--cpus",     "2",
+        "--memory",   config.memory? ? config.memory.to_s : "512",
+        "--nictype1", "82540EM",
+        "--vram", "64",
+        "--cpus",     config.cpus? ? config.cpus : "2",
         "--ioapic",   "on"
       ]
 
+      box.dns.tld = "dev"
+      box.dns.patterns = [/^.*#{box.vm.host_name}$/, /^.*#{name}$/]
+
       if config.recipes? && File.directory?(config.cookbooks)
         box.vm.provision :chef_solo do |chef|
-          chef.cookbooks_path = config.cookbooks
+          chef.cookbooks_path = File.expand_path(config.cookbooks,home2)
+          if box.vm.guest == :windows
+            chef.provisioning_path = "C:/tmp"
+          #  chef.binary_env = "cmd /C"
+          end
           chef.log_level = :debug # config.log_level
 
           config.recipes.each do |recipe|
             chef.add_recipe(recipe)
           end
-
+          
           chef.json.merge!(config.json)
-        end
+          chef.json.merge!({:ipaddr=>ipaddr})
+
+          if config.ruby_files && config.ruby_files.chef
+          config.ruby_files.chef.each do |file|
+            eval(File.read("#{home2}/boxes/#{file}"))
+          end
+          end
+       end
       end
     end
-  end
-  config.vm.define :chefs do |chefs_config|
-    chefs_config.vm.box = "ubuntu11.10"
-    chefs_config.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = "cookbooks"
-      chef.node_name="chefserver" 
-      chef.run_list.clear
-      chef.add_recipe("apt::default")
-      chef.add_recipe("build-essential")
-      chef.add_recipe("chef-server::rubygems-install") 
-      chef.json={
-        :chef_server=>{
-        :server_url=> "http://localhost.localdomain:4000",
-        :webui_enabled=> true,
-      }
-    }
-    end
-    chefs_config.vm.forward_port 4000, 4000
-    chefs_config.vm.forward_port 4040, 4040
-    chefs_config.vm.forward_port 22, 2223
-    chefs_config.vm.network :hostonly, "192.168.50.3"
-  end
-  config.vm.define :jenkins do |jenkins_config|
-    jenkins_config.vm.box = "ubuntu11.10"
-    jenkins_config.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = "cookbooks"
-      chef.node_name="jenkins" 
-      chef.run_list.clear
-      chef.add_recipe("apt::default")
-      chef.add_recipe("java")
-      chef.add_recipe("git")
-      chef.add_recipe("julia-jenkins")
-      chef.json = {
-          :julia_jenkins => {
-              :github => {
-                  :clientID => IO.read(".github.clientID")[0..-2],
-                  :clientSecret => IO.read(".github.clientSecret")[0..-2],
-                  :organization => "JuliaLang",
-                  :admin_user => "loladiro"
-              }
-          },
-          :jenkins => {
-              :node => {
-                  :name => "testworker",
-                  :executors => 1,
-                  :ssh_user => "vagrant",
-                  :ssh_pass => "vagrant",
-                  :ssh_host => "testworker",
-                  :availability => "demand",
-              }
-          }
-      }
-    end
-    jenkins_config.vm.host_name = "jenkins"
-    jenkins_config.vm.forward_port 8080, 8080
-    jenkins_config.vm.forward_port 22, 2224 
-    jenkins_config.vm.network :hostonly, "192.168.50.4"
-  end
-  config.vm.define :test_worker do |worker_config|
-    worker_config.vm.box = "ubuntu11.10"
-    worker_config.vm.provision :chef_solo do |chef|
-        chef.cookbooks_path = "cookbooks"
-        chef.node_name = "testworker"
-        chef.run_list.clear
-        chef.add_recipe("build-essential")
-        chef.add_recipe("git")
-        chef.add_recipe("java") 
-        chef.add_recipe("gfortran")
-  end
-  worker_config.vm.host_name = "testworker"
-  worker_config.vm.forward_port 22, 2225      
-  worker_config.vm.network :hostonly, "192.168.50.10" 
   end
 end

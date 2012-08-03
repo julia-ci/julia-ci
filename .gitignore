@@ -1,4 +1,14 @@
 .github*
+jenkins-plugins/*/work
+jenkins-plugins/*/target
+a.out
 keys/*
 .vagrant
 travis-boxes
+boxes/local.yml
+baseboxes/build
+baseboxes/iso
+/jenkins-plugins/jbox/target/
+/jenkins-plugins/jbox/work/
+*~
+*.box

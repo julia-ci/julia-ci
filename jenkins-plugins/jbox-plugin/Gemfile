@@ -1,0 +1,6 @@
+source :rubygems
+
+gem "jenkins-plugin-runtime", :path => '../jenkins.rb/ruby-runtime'
+group :development do
+  gem 'jpi', :path => '../jenkins.rb/ruby-tools/jpi'
+end

@@ -1,0 +1,34 @@
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!-- TODO help -->
+  
+        <f:entry title="${%Name}" field="displayName">
+            <f:textbox/>
+        </f:entry>
+
+        <f:entry title="${%Hostname}" help="/plugin/ssh/help-hostname.html" field="hostname">
+            <f:textbox name="hostname"/>
+        </f:entry>
+        <f:entry title="${%Port}" help="/plugin/ssh/help-port.html" field="port">
+            <f:textbox name="port"/>
+        </f:entry>
+        <f:entry title="${%User Name}" help="/plugin/ssh/help-login.html" field="username">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Password/Passphrase}" help="/plugin/ssh/help-password.html" field="pass">
+            <f:password />
+        </f:entry>
+           
+        <f:entry title="${%Keyfile}" help="/plugin/ssh/help-keyfile.html" field="keyfile">
+            <f:textbox class="setting-input" name="keyfile"
+                     checkUrl="'${rootURL}/descriptor/SSHBuildWrapper/keyfileCheck?keyfile='+escape(this.value)"/>                   
+        </f:entry>
+        
+        <f:entry title="${%Remote FS Config Dir.}" field="configDir">
+            <f:textbox />
+        </f:entry>
+
+    <f:validateButton title="${%Test connection}" progress="${%Testing...}" method="testConnection" with="hostname,username,pass,keyfile"/>
+
+</j:jelly>
