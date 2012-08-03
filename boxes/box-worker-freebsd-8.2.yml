@@ -1,5 +1,0 @@
-base: freebsd-8.2-experimental
-recipes:
-    - build-essential
-    - git
-    - gfortran
