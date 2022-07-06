@@ -19,7 +19,7 @@
     		<dependency>
 			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
-			<version>0.1.42</version>
+			<version>0.1.54</version>
 		</dependency>
   </dependencies>
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
